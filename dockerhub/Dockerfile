@@ -10,10 +10,17 @@ LABEL \
     org.opencontainers.image.vendor="CentOS" \
     org.opencontainers.image.licenses="GPL-2.0-only" \
     org.opencontainers.image.created="2020-11-13 00:00:00+00:00"
-CMD ["/bin/bash"]
 
 ENV TZ=Europe/Moscow
+
 RUN yum update -y # buildkit
+
+RUN yum install -y openssh-server openssh-clients
+RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN ssh-keygen -q -N "" -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -q -N "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+RUN ssh-keygen -q -N "" -t ed25519  -f /etc/ssh/ssh_host_ed25519_key
+
 RUN yum install -y epel-release deltarpm wget gcc gcc-c++ lynx bison mysql-devel e2fsprogs-devel keyutils-libs-devel krb5-devel libogg libselinux-devel libsepol-devel gmp gnutls-devel libogg-devel openssl-devel zlib-devel perl-DateManip tftp-server httpd make ncurses-devel libtermcap-devel sendmail sendmail-cf caching-nameserver sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel subversion kernel-devel uuid-devel libtool libtool-ltdl-devel sqlite-devel libuuid-devel sqlite unixODBC unixODBC-devel texinfo curl-devel net-snmp-devel neon-devel speex-devel gsm-devel spandsp-devel doxygen path gmpgnutls-devel # buildkit
 
 WORKDIR /usr/src
@@ -39,5 +46,7 @@ RUN yum localinstall -y mysql-connector-odbc-8.0.33-1.el7.x86_64.rpm
 RUN wget http://repo.mysql.com/yum/mysql-connectors-community/el/7/x86_64/mysql-connector-odbc-setup-8.0.33-1.el7.x86_64.rpm
 RUN yum localinstall -y mysql-connector-odbc-setup-8.0.33-1.el7.x86_64.rpm
 
-WORKDIR /etc/asterisk
-CMD ["asterisk","-f"]
+COPY cmd.sh /usr/src
+
+CMD ["/usr/src/cmd.sh"]
+

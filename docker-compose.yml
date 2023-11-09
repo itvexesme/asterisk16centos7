@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   asterisk:
-    image: pvn15/asterisk16centos7:26102023
+    image: pvn15/asterisk16centos7:09112023
     privileged: true
     volumes:
       - ${ODBC_INI_FILE}:/etc/odbc.ini
